@@ -1,0 +1,16 @@
+# Set the path where you want to search for and delete files
+$directoryPath = "C:\Path\To\Your\Directory"
+
+# Get all files in the specified directory
+$files = Get-ChildItem -Path $directoryPath -File
+
+# Specify the string to match in the file name
+$stringToMatch = "Transportation - General Agent Status Report.pdf"
+
+# Iterate through each file and delete if the name contains the specified string
+foreach ($file in $files) {
+    if ($file.Name -like "*$stringToMatch*") {
+        Remove-Item $file.FullName -Force
+        Write-Host "Deleted $($file.FullName)"
+    }
+}
