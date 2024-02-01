@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export to Excel</title>
+</head>
+<body>
+
+<!-- Custom button for exporting to Excel -->
+<button id="exportButton">Export to Excel</button>
+
+<!-- MicroStrategy Library JavaScript SDK -->
+<script src="https://your-mstr-library-url/javascripts/lib/3rdparty/babel-polyfill.min.js"></script>
+<script src="https://your-mstr-library-url/javascripts/mstr-loader.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Replace 'your-dossier-id' with the actual ID of your MicroStrategy Dossier
+        var dossierId = 'your-dossier-id';
+
+        // Initialize MicroStrategy Library
+        mstr.loader.init({
+            baseUrl: 'https://your-mstr-library-url',
+            scriptUrl: 'https://your-mstr-library-url/javascripts/loader.js',
+            alias: 'mstr'
+        });
+
+        mstr.then(function () {
+            // Add click event listener to the export button
+            document.getElementById('exportButton').addEventListener('click', function () {
+                // Replace 'your-export-task-id' with the actual ID of your MicroStrategy export task
+                var exportTaskId = 'your-export-task-id';
+
+                // Execute export task
+                mstr.exportTask.execute({
+                    taskId: exportTaskId,
+                    dossierId: dossierId,
+                    fileType: 'excel',
+                    fileName: 'exported-dossier'
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
