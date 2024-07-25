@@ -1,6 +1,8 @@
 import pdfplumber
 from pptx import Presentation
 from pptx.util import Inches
+import io
+from PIL import Image
 
 def convert_pdf_to_ppt(pdf_path, ppt_path):
     # Create a PowerPoint presentation object
@@ -10,10 +12,9 @@ def convert_pdf_to_ppt(pdf_path, ppt_path):
     with pdfplumber.open(pdf_path) as pdf:
         # Iterate over each page in the PDF
         for page_num, page in enumerate(pdf.pages):
-            # Extract text and images from the page
+            # Extract text from the page
             text = page.extract_text()
-            images = page.images
-            
+
             # Add a slide to the presentation
             slide_layout = prs.slide_layouts[5]  # Choosing a blank layout
             slide = prs.slides.add_slide(slide_layout)
@@ -26,14 +27,27 @@ def convert_pdf_to_ppt(pdf_path, ppt_path):
                 width = Inches(8.5)
                 height = Inches(5.5)
                 textbox = slide.shapes.add_textbox(left, top, width, height)
-                textbox.text = text
-                
+                textbox_frame = textbox.text_frame
+                p = textbox_frame.add_paragraph()
+                p.text = text
+            
             # Add images to the slide
-            for image in images:
-                x, y, w, h = image['x0'], image['top'], image['width'], image['height']
-                img_path = f"temp_image_{page_num}.png"
-                page.to_image().crop((x, y, x + w, y + h)).save(img_path)
-                slide.shapes.add_picture(img_path, Inches(x / 72), Inches(y / 72), Inches(w / 72), Inches(h / 72))
+            for img in page.images:
+                img_obj = page.to_image()
+                img_bbox = (img['x0'], img['top'], img['x1'], img['bottom'])
+                cropped_image = img_obj.crop(img_bbox)
+                
+                # Save the image to a BytesIO object
+                image_stream = io.BytesIO()
+                cropped_image.save(image_stream, format='PNG')
+                image_stream.seek(0)
+
+                # Add image to slide
+                left = Inches(img['x0'] / 72)
+                top = Inches(img['top'] / 72)
+                width = Inches((img['x1'] - img['x0']) / 72)
+                height = Inches((img['bottom'] - img['top']) / 72)
+                slide.shapes.add_picture(image_stream, left, top, width, height)
     
     # Save the presentation
     prs.save(ppt_path)
