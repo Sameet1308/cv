@@ -41,18 +41,15 @@ def convert_pdf_to_ppt(pdf_path, ppt_path):
                 
                 # Extract the image as a PIL object
                 img_obj = page.to_image()
-                img_cropped = img_obj.crop((x0, top, x1, bottom))
-                
-                # Convert cropped image to bytes
-                image_stream = io.BytesIO()
-                img_cropped.save(image_stream, format="PNG")
-                image_stream.seek(0)
+                with io.BytesIO() as output:
+                    img_cropped = img_obj.original.crop((x0, top, x1, bottom))
+                    img_cropped.save(output, format="PNG")
+                    image_stream = io.BytesIO(output.getvalue())
 
-                # Add image to slide
-                img_left = Inches(1)
-                img_top = Inches(6.5)
-                img_width = Inches(8)
-                slide.shapes.add_picture(image_stream, img_left, img_top, img_width)
+                    # Add image to slide
+                    img_left = Inches(1)
+                    img_top = Inches(5.5)
+                    slide.shapes.add_picture(image_stream, img_left, img_top, width=Inches(8))
     
     # Save the presentation
     prs.save(ppt_path)
