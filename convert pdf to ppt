@@ -1,8 +1,6 @@
 import pdfplumber
 from pptx import Presentation
 from pptx.util import Inches
-import io
-from PIL import Image
 
 def convert_pdf_to_ppt(pdf_path, ppt_path):
     # Create a PowerPoint presentation object
@@ -18,7 +16,8 @@ def convert_pdf_to_ppt(pdf_path, ppt_path):
             # Add a slide to the presentation
             slide_layout = prs.slide_layouts[5]  # Choosing a blank layout
             slide = prs.slides.add_slide(slide_layout)
-            slide.shapes.title.text = f"Page {page_num + 1}"
+            title = slide.shapes.title
+            title.text = f"Page {page_num + 1}"
             
             # Add text to the slide
             if text:
@@ -31,23 +30,14 @@ def convert_pdf_to_ppt(pdf_path, ppt_path):
                 p = textbox_frame.add_paragraph()
                 p.text = text
             
-            # Add images to the slide
-            for img in page.images:
-                img_obj = page.to_image()
-                img_bbox = (img['x0'], img['top'], img['x1'], img['bottom'])
-                cropped_image = img_obj.crop(img_bbox)
-                
-                # Save the image to a BytesIO object
-                image_stream = io.BytesIO()
-                cropped_image.save(image_stream, format='PNG')
-                image_stream.seek(0)
-
-                # Add image to slide
-                left = Inches(img['x0'] / 72)
-                top = Inches(img['top'] / 72)
-                width = Inches((img['x1'] - img['x0']) / 72)
-                height = Inches((img['bottom'] - img['top']) / 72)
-                slide.shapes.add_picture(image_stream, left, top, width, height)
+            # Placeholder for images
+            if page.images:
+                left = Inches(1)
+                top = Inches(7)
+                width = Inches(8.5)
+                height = Inches(1)
+                textbox = slide.shapes.add_textbox(left, top, width, height)
+                textbox.text_frame.text = "Images here (manual insertion required)"
     
     # Save the presentation
     prs.save(ppt_path)
