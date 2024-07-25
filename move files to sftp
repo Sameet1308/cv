@@ -1,0 +1,63 @@
+# Define source and destination paths
+$sourcePath = "\\source\shared\path"
+$destinationPath = "\\destination\shared\path"
+
+# Log file to capture any errors or messages
+$logFile = "C:\path\to\log\file.log"
+
+# Function to log messages
+function Log-Message {
+    param (
+        [string]$message
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "$timestamp - $message"
+    Write-Output $logMessage
+    Add-Content -Path $logFile -Value $logMessage
+}
+
+# Function to move files
+function Move-Files {
+    param (
+        [string]$source,
+        [string]$destination
+    )
+
+    try {
+        # Check if source path exists
+        if (-Not (Test-Path -Path $source)) {
+            throw "Source path '$source' does not exist."
+        }
+
+        # Check if destination path exists, create if it doesn't
+        if (-Not (Test-Path -Path $destination)) {
+            New-Item -ItemType Directory -Path $destination -Force
+            Log-Message "Created destination directory: $destination"
+        }
+
+        # Get files from source directory
+        $files = Get-ChildItem -Path $source -File
+
+        # Move each file to the destination directory
+        foreach ($file in $files) {
+            $sourceFilePath = Join-Path -Path $source -ChildPath $file.Name
+            $destinationFilePath = Join-Path -Path $destination -ChildPath $file.Name
+
+            try {
+                Move-Item -Path $sourceFilePath -Destination $destinationFilePath -Force
+                Log-Message "Successfully moved file: $sourceFilePath to $destinationFilePath"
+            }
+            catch {
+                Log-Message "Error moving file: $sourceFilePath to $destinationFilePath - $_"
+            }
+        }
+    }
+    catch {
+        Log-Message "Error in Move-Files function: $_"
+    }
+}
+
+# Main script execution
+Log-Message "Starting file move operation from $sourcePath to $destinationPath"
+Move-Files -source $sourcePath -destination $destinationPath
+Log-Message "File move operation completed"
