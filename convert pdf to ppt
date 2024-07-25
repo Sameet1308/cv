@@ -1,0 +1,45 @@
+import pdfplumber
+from pptx import Presentation
+from pptx.util import Inches
+
+def convert_pdf_to_ppt(pdf_path, ppt_path):
+    # Create a PowerPoint presentation object
+    prs = Presentation()
+    
+    # Open the PDF file
+    with pdfplumber.open(pdf_path) as pdf:
+        # Iterate over each page in the PDF
+        for page_num, page in enumerate(pdf.pages):
+            # Extract text and images from the page
+            text = page.extract_text()
+            images = page.images
+            
+            # Add a slide to the presentation
+            slide_layout = prs.slide_layouts[5]  # Choosing a blank layout
+            slide = prs.slides.add_slide(slide_layout)
+            slide.shapes.title.text = f"Page {page_num + 1}"
+            
+            # Add text to the slide
+            if text:
+                left = Inches(1)
+                top = Inches(1.5)
+                width = Inches(8.5)
+                height = Inches(5.5)
+                textbox = slide.shapes.add_textbox(left, top, width, height)
+                textbox.text = text
+                
+            # Add images to the slide
+            for image in images:
+                x, y, w, h = image['x0'], image['top'], image['width'], image['height']
+                img_path = f"temp_image_{page_num}.png"
+                page.to_image().crop((x, y, x + w, y + h)).save(img_path)
+                slide.shapes.add_picture(img_path, Inches(x / 72), Inches(y / 72), Inches(w / 72), Inches(h / 72))
+    
+    # Save the presentation
+    prs.save(ppt_path)
+    print(f"Presentation saved to {ppt_path}")
+
+# Usage example
+pdf_path = "path/to/your/pdf_file.pdf"
+ppt_path = "path/to/save/presentation.pptx"
+convert_pdf_to_ppt(pdf_path, ppt_path)
