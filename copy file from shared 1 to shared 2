@@ -1,0 +1,19 @@
+# Define the source and target shared paths
+$sourcePath = "\\SourceSharedPath\folder"
+$targetPath = "\\TargetSharedPath\folder"
+$fileName = "example.txt"
+
+# Search for the file in the source directory
+$sourceFile = Get-ChildItem -Path $sourcePath -Filter $fileName -File -Recurse
+
+# Check if the file was found
+if ($sourceFile) {
+    # Define the target file path
+    $targetFile = Join-Path -Path $targetPath -ChildPath $fileName
+    
+    # Copy the file to the target path
+    Copy-Item -Path $sourceFile.FullName -Destination $targetFile -Force
+    Write-Host "File copied successfully from $sourceFile to $targetFile"
+} else {
+    Write-Host "File $fileName not found in $sourcePath"
+}
