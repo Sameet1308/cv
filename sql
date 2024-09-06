@@ -11,9 +11,8 @@ DateFlags AS (
         [Date], 
         'Current Week' AS [Flag]
     FROM DateRange
-    WHERE DATEPART(WEEKDAY, [Date]) BETWEEN 2 AND 6 -- Monday to Friday
-      AND [Date] >= DATEADD(DAY, 2 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start of current Monday
-      AND [Date] <= DATEADD(DAY, 6 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End of current Friday
+    WHERE [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE(), 2), GETDATE()) -- Start from Monday
+      AND [Date] <= DATEADD(DAY, 5 - DATEPART(WEEKDAY, GETDATE(), 2), GETDATE()) -- End on Friday
 
     UNION ALL
 
@@ -22,9 +21,8 @@ DateFlags AS (
         [Date], 
         'True Week' AS [Flag]
     FROM DateRange
-    WHERE DATEPART(WEEKDAY, [Date]) BETWEEN 1 AND 7 -- Sunday to Saturday
-      AND [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start of current Sunday
-      AND [Date] <= DATEADD(DAY, 7 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End of current Saturday
+    WHERE [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start on Sunday
+      AND [Date] <= DATEADD(DAY, 7 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End on Saturday
 
     UNION ALL
 
