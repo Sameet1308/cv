@@ -11,7 +11,7 @@ DateFlags AS (
         [Date], 
         'Current Week' AS [Flag]
     FROM DateRange
-    WHERE [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE(), 2), GETDATE()) -- Start from Monday
+    WHERE [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE(), 2), GETDATE()) -- Start on Monday
       AND [Date] <= DATEADD(DAY, 5 - DATEPART(WEEKDAY, GETDATE(), 2), GETDATE()) -- End on Friday
 
     UNION ALL
