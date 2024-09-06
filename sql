@@ -6,23 +6,23 @@ WITH DateRange AS (
     WHERE [Type] = 'P' AND Number <= DATEDIFF(DAY, '2024-01-01', GETDATE())
 ),
 DateFlags AS (
-    -- Current Week (Monday to Friday)
-    SELECT 
-        [Date], 
-        'Current Week' AS [Flag]
-    FROM DateRange
-    WHERE [Date] >= DATEADD(DAY, 1 - (DATEPART(WEEKDAY, GETDATE()) + @@DATEFIRST - 1) % 7, GETDATE()) -- Start on Monday
-      AND [Date] <= DATEADD(DAY, 5 - (DATEPART(WEEKDAY, GETDATE()) + @@DATEFIRST - 1) % 7, GETDATE()) -- End on Friday
-
-    UNION ALL
-
     -- True Week (Sunday to Saturday)
     SELECT 
         [Date], 
         'True Week' AS [Flag]
     FROM DateRange
-    WHERE [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start on Sunday
+    WHERE [Date] >= DATEADD(DAY, -(DATEPART(WEEKDAY, GETDATE()) - 1), GETDATE()) -- Start on Sunday
       AND [Date] <= DATEADD(DAY, 7 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End on Saturday
+
+    UNION ALL
+
+    -- Current Week (Monday to Friday)
+    SELECT 
+        [Date], 
+        'Current Week' AS [Flag]
+    FROM DateRange
+    WHERE [Date] >= DATEADD(DAY, -(DATEPART(WEEKDAY, GETDATE()) - 2), GETDATE()) -- Start on Monday
+      AND [Date] <= DATEADD(DAY, 6 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End on Friday
 
     UNION ALL
 
