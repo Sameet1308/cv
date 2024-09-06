@@ -6,13 +6,34 @@ WITH DateRange AS (
     WHERE [Type] = 'P' AND Number <= DATEDIFF(DAY, '2024-01-01', GETDATE())
 ),
 DateFlags AS (
-    -- Current Week (Dates from Saturday to Friday)
+    -- Current Week (Monday to Friday)
     SELECT 
         [Date], 
         'Current Week' AS [Flag]
     FROM DateRange
-    WHERE DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) <= [Date] 
-      AND [Date] <= DATEADD(DAY, 7 - DATEPART(WEEKDAY, GETDATE()), GETDATE())
+    WHERE DATEPART(WEEKDAY, [Date]) BETWEEN 2 AND 6 -- Monday to Friday
+      AND [Date] >= DATEADD(DAY, 2 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start of current Monday
+      AND [Date] <= DATEADD(DAY, 6 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End of current Friday
+
+    UNION ALL
+
+    -- True Week (Sunday to Saturday)
+    SELECT 
+        [Date], 
+        'True Week' AS [Flag]
+    FROM DateRange
+    WHERE DATEPART(WEEKDAY, [Date]) BETWEEN 1 AND 7 -- Sunday to Saturday
+      AND [Date] >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- Start of current Sunday
+      AND [Date] <= DATEADD(DAY, 7 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) -- End of current Saturday
+
+    UNION ALL
+
+    -- Past 7 Days from the Current Date
+    SELECT 
+        [Date], 
+        'Past 7 Days' AS [Flag]
+    FROM DateRange
+    WHERE [Date] BETWEEN DATEADD(DAY, -7, GETDATE()) AND GETDATE()
 
     UNION ALL
 
@@ -32,17 +53,6 @@ DateFlags AS (
         'Past 30 Days' AS [Flag]
     FROM DateRange
     WHERE [Date] BETWEEN DATEADD(DAY, -30, GETDATE()) AND GETDATE()
-
-    UNION ALL
-
-    -- Current True Week (Monday to Friday)
-    SELECT 
-        [Date], 
-        'Current True Week' AS [Flag]
-    FROM DateRange
-    WHERE DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), GETDATE()) <= [Date] 
-      AND [Date] <= DATEADD(DAY, 5 - DATEPART(WEEKDAY, GETDATE()), GETDATE())
-      AND DATEPART(WEEKDAY, [Date]) BETWEEN 2 AND 6 -- Monday to Friday
 
     UNION ALL
 
