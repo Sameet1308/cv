@@ -10,7 +10,7 @@ Filtered_Year_Month AS (
         current_year_alias AS year_alias,
         t1.month_num
     FROM Current_Year_Month,
-    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t1
+    (SELECT ROW_NUMBER() OVER (ORDER BY day_of_calendar) AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t1
     WHERE t1.month_num < current_month_alias
     UNION ALL
     -- Previous Year to Date (PYTD)
@@ -19,7 +19,7 @@ Filtered_Year_Month AS (
         (current_year_alias - 1) AS year_alias,
         t2.month_num
     FROM Current_Year_Month,
-    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t2
+    (SELECT ROW_NUMBER() OVER (ORDER BY day_of_calendar) AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t2
     WHERE t2.month_num < current_month_alias
     UNION ALL
     -- Previous Year End (PYE) - All months of previous year
@@ -28,7 +28,7 @@ Filtered_Year_Month AS (
         (current_year_alias - 1) AS year_alias,
         t3.month_num
     FROM Current_Year_Month,
-    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t3
+    (SELECT ROW_NUMBER() OVER (ORDER BY day_of_calendar) AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t3
     UNION ALL
     -- Rolling 12 months
     SELECT
@@ -42,7 +42,7 @@ Filtered_Year_Month AS (
             ELSE (current_month_alias - t4.offset)
         END AS month_num
     FROM Current_Year_Month,
-    (SELECT ROW_NUMBER() OVER () AS offset FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t4
+    (SELECT ROW_NUMBER() OVER (ORDER BY day_of_calendar) AS offset FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t4
     WHERE t4.offset <= 12
 )
 SELECT *
