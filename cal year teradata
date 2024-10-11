@@ -1,0 +1,50 @@
+WITH Current_Year_Month AS (
+    SELECT
+        EXTRACT(YEAR FROM CURRENT_DATE) AS current_year,
+        EXTRACT(MONTH FROM CURRENT_DATE) AS current_month
+),
+Filtered_Year_Month AS (
+    -- Current Year to Date (CYTD)
+    SELECT
+        'CYTD' AS flag,
+        current_year AS year,
+        t1.month_num
+    FROM Current_Year_Month,
+    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t1
+    WHERE t1.month_num < current_month
+    UNION ALL
+    -- Previous Year to Date (PYTD)
+    SELECT
+        'PYTD' AS flag,
+        (current_year - 1) AS year,
+        t2.month_num
+    FROM Current_Year_Month,
+    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t2
+    WHERE t2.month_num < current_month
+    UNION ALL
+    -- Previous Year End (PYE) - All months of previous year
+    SELECT
+        'PYE' AS flag,
+        (current_year - 1) AS year,
+        t3.month_num
+    FROM Current_Year_Month,
+    (SELECT ROW_NUMBER() OVER () AS month_num FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t3
+    UNION ALL
+    -- Rolling 12 months
+    SELECT
+        'Rolling 12' AS flag,
+        CASE
+            WHEN (current_month - t4.offset) <= 0 THEN current_year - 1
+            ELSE current_year
+        END AS year,
+        CASE
+            WHEN (current_month - t4.offset) <= 0 THEN 12 + (current_month - t4.offset)
+            ELSE (current_month - t4.offset)
+        END AS month_num
+    FROM Current_Year_Month,
+    (SELECT ROW_NUMBER() OVER () AS offset FROM SYS_CALENDAR.CALENDAR WHERE day_of_calendar <= 12) t4
+    WHERE t4.offset <= 12
+)
+SELECT *
+FROM Filtered_Year_Month
+ORDER BY year DESC, month_num ASC;
