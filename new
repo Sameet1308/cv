@@ -1,68 +1,8 @@
+The performance bottleneck occurred because transformations in MicroStrategy (MSTR) were being executed on top of base tables, but the underlying transformed queries were ultimately running on Oracle. This resulted in significant delays due to Oracle’s processing limitations for these complex transformations.
 
-SELECT
-    1 AS id,
-    'Auto' AS description
-UNION ALL
-SELECT
-    2,
-    'Aviation'
-UNION ALL
-SELECT
-    3,
-    'Boiler'
-UNION ALL
-SELECT
-    4,
-    'CMP/BOP'
-UNION ALL
-SELECT
-    5,
-    'Farmowners'
-UNION ALL
-SELECT
-    6,
-    'General Liability'
-UNION ALL
-SELECT
-    7,
-    'Inland Marine'
-UNION ALL
-SELECT
-    8,
-    'Not Available'
-UNION ALL
-SELECT
-    9,
-    'Ocean Marine'
-UNION ALL
-SELECT
-    10,
-    'Other'
-UNION ALL
-SELECT
-    11,
-    'Professional Liability'
-UNION ALL
-SELECT
-    12,
-    'Property'
-UNION ALL
-SELECT
-    13,
-    'Umbrella'
-UNION ALL
-SELECT
-    14,
-    'Workers Compensation'
-UNION ALL
-SELECT
-    15,
-    'Subtotal Earned Premium & Fees'
-UNION ALL
-SELECT
-    16,
-    'Net Investment Amount'
-UNION ALL
-SELECT
-    17,
-    'Total Controllable Revenue';
+To address this issue, we offloaded the base tables to S3 and moved the transformation execution to Databricks. By doing so:
+	1.	Storage Optimization: S3 serves as the scalable and cost-effective storage layer for the source/base tables.
+	2.	Transformation Performance: Databricks processes the transformations more efficiently using its distributed computing capabilities, reducing the load on Oracle.
+	3.	Improved Efficiency: The combination of S3 for storage and Databricks for execution ensures faster query performance, better resource utilization, and eliminates Oracle as the performance bottleneck.
+
+This new architecture provides a more scalable and efficient solution compared to running transformations directly on Oracle through MSTR.
