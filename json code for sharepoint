@@ -1,0 +1,12 @@
+{
+  "elmType": "a",
+  "attributes": {
+    "href": "https://yourcompany.sharepoint.com/sites/Library/Folder/Migration_Checklist_Template.xlsx",
+    "target": "_blank"
+  },
+  "style": {
+    "text-decoration": "underline",
+    "color": "blue"
+  },
+  "txtContent": "Download Template"
+}
