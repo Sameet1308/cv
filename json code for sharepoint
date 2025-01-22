@@ -1,19 +1,25 @@
 {
-  "elmType": "div",
-  "style": {
-    "background-color": "#ffcc00",
-    "padding": "10px",
-    "font-weight": "bold",
-    "text-align": "center"
+  "elmType": "button",
+  "attributes": {
+    "type": "button",
+    "class": "ms-Button ms-Button--primary"
   },
-  "children": [
-    {
-      "elmType": "a",
-      "attributes": {
-        "href": "https://your-sharepoint-template-link",
-        "target": "_blank"
-      },
-      "txtContent": "Click Here to Download the Migration Checklist Template"
+  "style": {
+    "background-color": "#0078d7",
+    "color": "white",
+    "border": "none",
+    "padding": "10px",
+    "font-size": "14px"
+  },
+  "txtContent": "Add New Item",
+  "customRowAction": {
+    "action": "dialog",
+    "dialogProps": {
+      "title": "Reminder",
+      "subText": "Please download the latest Migration Checklist before proceeding.",
+      "confirmButton": "Open Form",
+      "cancelButton": "Cancel",
+      "url": "/sites/YourSite/Lists/YourList/NewForm.aspx"
     }
-  ]
+  }
 }
