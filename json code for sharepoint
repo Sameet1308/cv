@@ -1,12 +1,19 @@
 {
-  "elmType": "a",
-  "attributes": {
-    "href": "https://yourcompany.sharepoint.com/sites/Library/Folder/Migration_Checklist_Template.xlsx",
-    "target": "_blank"
-  },
+  "elmType": "div",
   "style": {
-    "text-decoration": "underline",
-    "color": "blue"
+    "background-color": "#ffcc00",
+    "padding": "10px",
+    "font-weight": "bold",
+    "text-align": "center"
   },
-  "txtContent": "Download Template"
+  "children": [
+    {
+      "elmType": "a",
+      "attributes": {
+        "href": "https://your-sharepoint-template-link",
+        "target": "_blank"
+      },
+      "txtContent": "Click Here to Download the Migration Checklist Template"
+    }
+  ]
 }
