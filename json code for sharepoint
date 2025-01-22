@@ -1,25 +1,31 @@
 {
-  "elmType": "button",
-  "attributes": {
-    "type": "button",
-    "class": "ms-Button ms-Button--primary"
-  },
-  "style": {
-    "background-color": "#0078d7",
-    "color": "white",
-    "border": "none",
-    "padding": "10px",
-    "font-size": "14px"
-  },
-  "txtContent": "Add New Item",
-  "customRowAction": {
-    "action": "dialog",
-    "dialogProps": {
-      "title": "Reminder",
-      "subText": "Please download the latest Migration Checklist before proceeding.",
-      "confirmButton": "Open Form",
-      "cancelButton": "Cancel",
-      "url": "/sites/YourSite/Lists/YourList/NewForm.aspx"
+  "schema": "https://developer.microsoft.com/json-schemas/sp/v2/view-formatting.schema.json",
+  "actions": [
+    {
+      "elmType": "button",
+      "style": {
+        "background-color": "#0078d4",
+        "color": "white",
+        "padding": "10px",
+        "font-size": "14px",
+        "border": "none",
+        "cursor": "pointer"
+      },
+      "attributes": {
+        "title": "Add New Item",
+        "type": "button"
+      },
+      "txtContent": "Add New Item",
+      "customRowAction": {
+        "action": "dialog",
+        "dialogProps": {
+          "title": "Reminder!",
+          "subText": "Please download the latest [Migration Checklist Template](https://your-template-link). Once done, proceed to submit your request.",
+          "confirmButton": "Continue to Form",
+          "cancelButton": "Cancel",
+          "url": "https://yourtenant.sharepoint.com/sites/YourSite/Lists/YourList/NewForm.aspx"
+        }
+      }
     }
-  }
+  ]
 }
